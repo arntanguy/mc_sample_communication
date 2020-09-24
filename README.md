@@ -3,10 +3,29 @@
 `mc_rtc` does not (currently) provide predefined inputs (such as ROS topics and services, OpenRTM ports and services, etc). It is however simple to implement your own communication interface, and define the logic of what to do with these inputs (creating tasks, providing targets to existing tasks, triggering state transitions in an FSM, etc). In this controller, we will see a few ways to achieve this through a toy example: sending joint angles while maintaining stabilization.
 
 There are multiple levels where these inputs can be defined: 
-- As a plugin: these are global components always running before and after each iteration of the controller (ex: `mc_rtc` has a ROS plugin continuously publishing the state of the robot(s) over ROS)
 - As a state: you can write a standalone FSM state that handles communication and defines what to do with the data.
-- As part of your `mc_control::fsm::Controller` implementation
-- By implementing your own GUI client 
+- As a plugin: these are global components always running before and after each iteration of the controller (ex: `mc_rtc` has a ROS plugin continuously publishing the state of the robot(s) over ROS).
+- By implementing your own GUI client: provides access to everything published in the GUI (but it's in general a pretty convoluted way of communicating, I wouldn't in general recommend it)
+- As part of your `mc_control::fsm::Controller` implementation (less recommended as it reduces reusability)
+
+## How to use this sample
+
+```
+mkdir build
+cd build
+cmake ..
+make 
+sudo make install
+```
+
+Then to run the controller, edit `~/.config/mc_rtc/mc_rtc.yaml`
+
+```yaml
+MainRobot: jvrc1
+Enabled: SampleCommunicationController
+```
+
+Note: If you want to use another robot, there are only a few minor changes to make (e.g replacing `jvrc1` with your own robot name e.g `hrp5p`).
 
 ## Using a state to change the robot posture over ROS
 
