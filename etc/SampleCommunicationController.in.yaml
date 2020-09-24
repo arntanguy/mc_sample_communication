@@ -54,6 +54,11 @@ states:
   StabilizedPostureInput:
     base: Parallel
     states: [Stabilizer::Standing, ROSPostureState]
+  ## If you wish to change the topic name, you can uncomment the configuration below
+  # configs:
+  #   ROSPostureState:
+  #     topic: "/your_custom_topic_name"
+
 # Transitions map
 transitions:
 - [StabilizedPostureInput, OK, StabilizedPostureInput, Strict]

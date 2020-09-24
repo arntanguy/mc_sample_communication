@@ -54,6 +54,40 @@ struct CLIClient : public mc_control::ControllerClient
     return true;
   }
 
+  bool move_com_above(std::stringstream & args)
+  {
+    std::string target = "";
+    args >> target;
+    if(!args)
+    {
+      std::cerr << "Requires one argument: LeftFoot, RightFoot or Center\n";
+      return false;
+    }
+    if(target == "LeftFoot")
+    {
+      target = "Left foot";
+    }
+    else if(target == "RightFoot")
+    {
+      target = "Right foot";
+    }
+    this->send_request({{"FSM", "Stabilizer::Standing", "Move"}, target});
+    return true;
+  }
+
+  bool set_com_xyz(std::stringstream & args)
+  {
+    Eigen::Vector3d target;
+    args >> target.x() >> target.y() >> target.z();
+    if(!args)
+    {
+      std::cerr << "Requires three arguments: x y z\n";
+      return false;
+    }
+    this->send_request({{"FSM", "Stabilizer::Standing", "Move"}, "CoM Target"}, target);
+    return true;
+  }
+
   void run()
   {
     bool running = true;
@@ -63,11 +97,13 @@ struct CLIClient : public mc_control::ControllerClient
     {
       {"set_joint_angle", {&CLIClient::set_joint_angle, "Set joint angle (joint name, angle)"}},
       {"set_posture_weight", {&CLIClient::set_posture_weight, "Set posture weight (weight)"}},
-      {"set_posture_stiffness", {&CLIClient::set_posture_stiffness, "Set posture stiffness (stiffness)"}}
+      {"set_posture_stiffness", {&CLIClient::set_posture_stiffness, "Set posture stiffness (stiffness)"}},
+      {"move_com_above", {&CLIClient::move_com_above, "Move CoM above a surface (LeftFoot, RightFoot, Center) using the stabilizer state"}},
+      {"set_com_xyz", {&CLIClient::set_com_xyz, "Move CoM to a world (x,y,z) position using the stabilizer state"}}
     };
     auto help = [&callbacks]()
     {
-      std::cout << "\nposture_cli_client - Simple tool to demonstrate implementation of a CLI client to set targets/gains of the posture task" << std::endl << std::endl;
+      std::cout << "\nsimple_cli_client - Simple tool to demonstrate implementation of a CLI client to set targets/gains of the posture task" << std::endl << std::endl;
         for(const auto & cb : callbacks)
         {
           std::cout << "\t- " << cb.first << " -- " << cb.second.second << "\n";

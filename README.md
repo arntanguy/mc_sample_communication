@@ -18,25 +18,43 @@ The general principle is as follows:
 - This thread updates the desired posture according to the message's data
 - At each iteration, the state checks whether it needs to update the posture task targets, and do so if needed.
 
-This is implemented in `ROSPostureState`. You can try it by running the controller, and sending a message to the `mc_sample_communication/joints_state_input` topic. For example, to move the robot neck:
+This is implemented in `ROSPostureState`. If you want to achieve a stabilized robot with the ability of moving the joints over ROS, you can run both states together using the `Parallel` state: 
+
+```
+StabilizedPostureInput:
+  base: Parallel
+  states: [Stabilizer::Standing, ROSPostureState]
+```
+
+Here the `Stabilizer::Standing` state is provided by `mc_rtc` and creates a `LIPMStabilizer` task (which adds a CoM tasks, two center of pressure tasks, and weak tasks to keep the upper body upright). The `ROSPostureState` by default does nothing more than providing a ROS subscriber listening to joint command messages. When it recieves a message, it updates the target posture, causing the robot joints to move.
+
+You can try it by running the controller, and sending a message to the `mc_sample_communication/joints_state_input` topic. For example, to move the robot neck:
 
 ```
 rostopic pub -1 /mc_sample_communication/joints_state_input sensor_msgs/JointState '{header: auto, name: ['NECK_P', 'NECK_Y'], position: [-1, -0.5418], velocity: [], effort: []}'
 ```
 
-## Sending joint state as a CLI client for the GUI
+## As a plugin
 
-In this section, we will see how to implement a very simple CLI client to send requests to the GUI server provided by `mc_rtc`. This allows you to interact with any element visible in the GUI.
+In this section, we will see how to implement a plugin that is always active, and allows to control the CoM height from ROS. 
 
-The general principle is that mc_rtc provides GUI elements identitifed by a unique identifier, composed of the `{category}, element name}`. For example, the posture task targets are shown as joint sliders identified as `{"Tasks", "FSM_posture_jvrc1", "Targets"}, "Joint Name"}`
 
-By inheriting from `mc_control::ControllerClient`, you can write your own client to interact with the gui server. This is demonstrated in `tools/posture_cli_client.cpp`, that implements a simple command line interface to change joint targets and weight/stiffness of the posture task.
+
+## Implementing a simple CLI client to interact with GUI elements 
+
+In this section, we will see how to implement a very simple CLI client to send requests to the GUI server provided by `mc_rtc`. This allows you to interact with any element visible in the GUI. In particular, we will use it to change joint targets, set gains of the posture task, and set targets for the CoM position.
+
+The general principle is that mc_rtc provides GUI elements identitifed by a unique identifier, composed of the `{category}, element name}`. For example, the posture task targets are shown as joint sliders identified as `{"Tasks", "FSM_posture_jvrc1", "Targets"}, "Joint Name"}`. By inheriting from `mc_control::ControllerClient`, you can write your own client to interact with the gui server. This is demonstrated in `tools/simple_cli_client.cpp`, that implements a simple command line interface to change joint targets and weight/stiffness of the posture task.
 
 ```
-./build/tools/posture_cli_client
+./build/tools/simple_cli_client
 (command) set_joint_angle NECK_P 0.5
 (command) set_joint_angle NECK_Y -0.5
 (command) set_posture_stiffness 20
 (command) set_joint_angle L_SHOULDER_P -0.5
+(command) move_com_above LeftFoot
+(command) move_com_above Center
+(command) move_com_above RightFoot
+(command) set_com_xyz 0 0 0.5
+(command) set_joint_angle L_SHOULDER_P 0.5
 ```
-

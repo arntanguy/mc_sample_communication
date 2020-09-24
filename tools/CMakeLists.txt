@@ -1,2 +1,2 @@
-add_executable(posture_cli_client posture_cli_client.cpp)
-target_link_libraries(posture_cli_client PRIVATE mc_rtc::mc_control_client)
+add_executable(simple_cli_client simple_cli_client.cpp)
+target_link_libraries(simple_cli_client PRIVATE mc_rtc::mc_control_client)
