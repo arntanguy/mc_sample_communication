@@ -5,7 +5,7 @@ Managed: false
 StepByStep: true
 # Change idle behaviour, if true the state is kept until transition,
 # otherwise the FSM holds the last state until transition
-IdleKeepState: false
+IdleKeepState: true
 # Where to look for state libraries
 StatesLibraries:
 - "@MC_STATES_DEFAULT_INSTALL_PREFIX@"
@@ -50,9 +50,12 @@ jvrc1:
     stiffness: 2
     weight: 100
 # Implement some additional text states
-states: {}
+states:
+  StabilizedPostureInput:
+    base: Parallel
+    states: [Stabilizer::Standing, ROSPostureState]
 # Transitions map
 transitions:
-- [SampleCommunicationController_Initial, OK, SampleCommunicationController_Initial, Strict]
+- [StabilizedPostureInput, OK, StabilizedPostureInput, Strict]
 # Initial state
-init: SampleCommunicationController_Initial
+init: StabilizedPostureInput
