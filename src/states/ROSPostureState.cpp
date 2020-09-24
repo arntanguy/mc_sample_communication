@@ -76,7 +76,6 @@ bool ROSPostureState::run(mc_control::fsm::Controller & ctl)
 
 void ROSPostureState::teardown(mc_control::fsm::Controller & ctl)
 {
-  mc_rtc::log::info("TEARDOWN");
   running_ = false;
   spinThread_.join();
 }
