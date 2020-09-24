@@ -20,6 +20,7 @@ if(NOT ${ROSCPP_FOUND})
 endif()
 
 add_subdirectory(src)
+add_subdirectory(tools)
 
 configure_file(etc/SampleCommunicationController.in.yaml "${CMAKE_CURRENT_BINARY_DIR}/etc/SampleCommunicationController.yaml")
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/etc/SampleCommunicationController.yaml" DESTINATION "${MC_CONTROLLER_INSTALL_PREFIX}/etc")
