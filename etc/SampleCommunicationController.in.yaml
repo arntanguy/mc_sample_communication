@@ -32,23 +32,15 @@ collisions:
   useMinimal: true
 # Initial set of contacts
 contacts:
-- r1: jvrc1
+- r1: hrp5_p 
   r2: ground
   r1Surface: LeftFoot
   r2Surface: AllGround
-- r1: jvrc1
+- r1: hrp5_p
   r2: ground
   r1Surface: RightFoot
   r2Surface: AllGround
 
-# Some options for a specific robot
-jvrc1:
-  posture:
-    stiffness: 1
-    weight: 10
-  ff:
-    stiffness: 2
-    weight: 100
 # Implement some additional text states
 states:
   StabilizedPostureInput:
@@ -64,3 +56,15 @@ transitions:
 - [StabilizedPostureInput, OK, StabilizedPostureInput, Strict]
 # Initial state
 init: StabilizedPostureInput
+
+##
+# Setup state observation of the real robot state:
+# - Joint state is obtained from encoder sensors
+# - Floating base state (used to compute com position and velocity) is obtained by a simple kinematic inertial observer
+#   exploiting IMU orientation and a control anchor point (roughly equivalent to Mehdi's TiltEstimator)
+##
+ObserverPipelines:
+- name: "MainPipeline"
+  observers:
+  - type: Encoder
+  - type: KinematicInertial

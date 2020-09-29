@@ -24,7 +24,7 @@ struct CLIClient : public mc_control::ControllerClient
       std::cerr << "Requires two arguments: joint name (string), angle (double)\n";
       return false;
     }
-    this->send_request({{"Tasks", "FSM_posture_jvrc1", "Target"}, joint}, angle);
+    this->send_request({{"Tasks", "FSM_posture_hrp5_p", "Target"}, joint}, angle);
     return true;
   }
 
@@ -37,7 +37,7 @@ struct CLIClient : public mc_control::ControllerClient
       std::cerr << "Requires one arguments: weight (double)\n";
       return false;
     }
-    this->send_request({{"Tasks", "FSM_posture_jvrc1", "Gains"}, "weight"}, weight);
+    this->send_request({{"Tasks", "FSM_posture_hrp5_p", "Gains"}, "weight"}, weight);
     return true;
   }
 
@@ -50,7 +50,7 @@ struct CLIClient : public mc_control::ControllerClient
       std::cerr << "Requires one arguments: stiffness (double)\n";
       return false;
     }
-    this->send_request({{"Tasks", "FSM_posture_jvrc1", "Gains"}, "stiffness"}, stiffness);
+    this->send_request({{"Tasks", "FSM_posture_hrp5_p", "Gains"}, "stiffness"}, stiffness);
     return true;
   }
 
