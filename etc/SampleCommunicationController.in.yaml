@@ -36,16 +36,26 @@ contacts:
   r2: ground
   r1Surface: LeftFoot
   r2Surface: AllGround
+  dof: [0, 0, 1, 1, 1, 0]
 - r1: hrp5_p
   r2: ground
   r1Surface: RightFoot
   r2Surface: AllGround
+  dof: [0, 0, 1, 1, 1, 0]
 
 # Implement some additional text states
 states:
   StabilizedPostureInput:
     base: Parallel
     states: [Stabilizer::Standing, ROSPostureState]
+    configs:
+      Stabilizer::Standing:
+        StabilizerConfig:
+          dcm_tracking:
+            gains:
+              prop: 1
+              integral: 5
+              deriv: 0
   ## If you wish to change the topic name, you can uncomment the configuration below
   # configs:
   #   ROSPostureState:
